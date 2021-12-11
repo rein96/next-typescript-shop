@@ -8,6 +8,13 @@ export interface Product {
   picture: any;
 }
 
+export const getSingleProduct = async (id: string) : Promise<Product> => {
+  console.log('getSingleProduct id', id)
+  const response = await fetch(`${process.env.API_URL}/products/${id}`)
+  const product = await response.json()
+  return product;
+}
+
 export const getProducts = async (): Promise<Product[]> => {
   const response = await fetch(`${process.env.API_URL}/products`)
   const products = await response.json();

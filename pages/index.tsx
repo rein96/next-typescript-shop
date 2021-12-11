@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import { GetServerSideProps } from 'next'
 // import { GetStaticProps } from 'next'
 import Head from 'next/head'
+import Link from 'next/link'
 import Title from 'components/Title';
 import { getProducts, Product } from 'lib/products';
 
@@ -13,7 +14,7 @@ interface HomePageProps {
  * getServerSideProps
  * Always call the CMS (server-side renders at runtime)
  * */
- export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
+export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
   console.log('[HomePage] getServerSideProps()');
   const products = await getProducts();
   return { props: { products } };
@@ -22,13 +23,16 @@ interface HomePageProps {
 /** 
  * getStaticProps + revalidate
  * Fetch products on the server side with ISR (Incremental Static Regeneration)
+ * revalidate -> Enables Incremental Static Regeneration (seconds)
+ * To test revalidate -> yarn run build
+ * If we use ISR, make sure apply to other page that displays the same data ([id].tsx)
  * */
 //  export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
 //   console.log('[HomePage] getStaticProps()');
 //   const products = await getProducts();
 //   return {
 //     props: { products, },
-//     revalidate: 30, // Enables Incremental Static Regeneration (seconds)
+//     revalidate: 30, // seconds
 //   }
 // }
 
@@ -43,7 +47,15 @@ const HomePage: NextPage<HomePageProps> = ({ products }) => {
         <p>
           <ul>
             {products.map(product => {
-              return <li key={product.id}>{product.title}</li>
+              return (
+                <li key={product.id}>
+                  <Link href={`products/${product.id}`}>
+                    <a>
+                      {product.title}
+                    </a>
+                  </Link>
+                </li>
+              )
             })}
           </ul>
         </p>
