@@ -38,11 +38,19 @@ export const getStaticPaths: GetStaticPaths<ProductPageParams> = async () => {
  * Use revalidate if homepage also uses revalidate
  */
 export const getStaticProps: GetStaticProps<ProductPageProps, ProductPageParams> = async ({ params: { id } }) => {
-  console.log('id', id)
-  const product = await getSingleProduct(id)
-  return {
-    props: { product },
-    revalidate: 20, // seconds
+  console.log('[ProductPage] getStaticProps id', id)
+  try {
+    const product = await getSingleProduct(id)
+    return {
+      props: { product },
+      revalidate: 20, // seconds
+    }
+  } catch (error) {
+    // Redirect to not found (404) page
+    // Otherwise it may return to 500 Internal Error page
+    return {
+      notFound: true
+    }
   }
 }
 
