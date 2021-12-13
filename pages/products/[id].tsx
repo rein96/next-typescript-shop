@@ -13,7 +13,10 @@ interface ProductPageProps {
   product: Product;
 }
 
-/** Get all product [id] */
+/** 
+ * Get all product [id] 
+ * getStaticPaths runs at build time when a new product doesn't exist
+ * */
 export const getStaticPaths: GetStaticPaths<ProductPageParams> = async () => {
   const products = await getProducts();
   console.log('products', products)
@@ -26,7 +29,8 @@ export const getStaticPaths: GetStaticPaths<ProductPageParams> = async () => {
 
   return {
     paths,
-    fallback: false, // return to 404 page
+    fallback: 'blocking', // the response is blocked until a new page is ready
+    // fallback: false, // return to 404 page
   }
 }
 
@@ -38,12 +42,12 @@ export const getStaticProps: GetStaticProps<ProductPageProps, ProductPageParams>
   const product = await getSingleProduct(id)
   return {
     props: { product },
-    // revalidate: 30, // seconds
+    revalidate: 20, // seconds
   }
 }
 
 const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
-  console.log('product', product)
+  console.log('[ProductPage]', product)
   return (
     <>
       <Head>

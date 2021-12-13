@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { GetServerSideProps } from 'next'
-// import { GetStaticProps } from 'next'
+import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import Title from 'components/Title';
@@ -14,11 +14,11 @@ interface HomePageProps {
  * getServerSideProps
  * Always call the CMS (server-side renders at runtime)
  * */
-export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
-  console.log('[HomePage] getServerSideProps()');
-  const products = await getProducts();
-  return { props: { products } };
-};
+// export const getServerSideProps: GetServerSideProps<HomePageProps> = async () => {
+//   console.log('[HomePage] getServerSideProps()');
+//   const products = await getProducts();
+//   return { props: { products } };
+// };
 
 /** 
  * getStaticProps + revalidate
@@ -27,14 +27,14 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async () =>
  * To test revalidate -> yarn run build
  * If we use ISR, make sure apply to other page that displays the same data ([id].tsx)
  * */
-//  export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
-//   console.log('[HomePage] getStaticProps()');
-//   const products = await getProducts();
-//   return {
-//     props: { products, },
-//     revalidate: 30, // seconds
-//   }
-// }
+ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
+  console.log('[HomePage] getStaticProps()');
+  const products = await getProducts();
+  return {
+    props: { products, },
+    revalidate: 20, // seconds
+  }
+}
 
 const HomePage: NextPage<HomePageProps> = ({ products }) => {
   return (
