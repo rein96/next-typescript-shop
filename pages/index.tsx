@@ -27,12 +27,12 @@ interface HomePageProps {
  * To test revalidate -> yarn run build
  * If we use ISR, make sure apply to other page that displays the same data ([id].tsx)
  * */
- export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
   console.log('[HomePage] getStaticProps()');
   const products = await getProducts();
   return {
     props: { products, },
-    revalidate: 20, // seconds
+    revalidate: Number(process.env.REVALIDATE_SECONDS),
   }
 }
 
