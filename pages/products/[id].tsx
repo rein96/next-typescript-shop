@@ -4,6 +4,7 @@ import { getProducts, getSingleProduct, Product } from 'lib/products'
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
 import Title from 'components/Title';
+import { ApiError } from 'lib/api';
 
 interface ProductPageParams extends ParsedUrlQuery {
   id: string;
@@ -46,11 +47,15 @@ export const getStaticProps: GetStaticProps<ProductPageProps, ProductPageParams>
       revalidate: 20, // seconds
     }
   } catch (error) {
-    // Redirect to not found (404) page
-    // Otherwise it may return to 500 Internal Error page
-    return {
-      notFound: true
+    if (error instanceof ApiError && error.status === 404) {
+      return {
+        notFound: true
+        // notFound: Redirect to not found (404) page
+        // Otherwise it may return to 500 Internal Error page
+      }
     }
+
+    throw error;
   }
 }
 
