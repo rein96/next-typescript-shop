@@ -1,3 +1,4 @@
+import { fetchJson } from "./api"
 export interface Product {
   id: number;
   title: string;
@@ -8,19 +9,15 @@ export interface Product {
   picture: any;
 }
 
-export const getSingleProduct = async (id: string) : Promise<Product> => {
+export const getSingleProduct = async (id: string): Promise<Product> => {
   console.log('getSingleProduct id', id)
-  const response = await fetch(`${process.env.API_URL}/products/${id}`)
-  if(!response.ok){
-    throw new Error(`request failed: ${response.status}`)
-  }
-  const product = await response.json()
+  const product = await fetchJson(`${process.env.API_URL}/products/${id}`)
   return product;
 }
 
 export const getProducts = async (): Promise<Product[]> => {
-  const response = await fetch(`${process.env.API_URL}/products`)
-  const products = await response.json();
+  console.log('getProducts');
+  const products = await fetchJson(`${process.env.API_URL}/products`)
   return products
 
 }
