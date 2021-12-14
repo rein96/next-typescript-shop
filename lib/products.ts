@@ -3,10 +3,18 @@ export interface Product {
   id: number;
   title: string;
   description: string;
-  price: number;
-  created_at: string;
-  updated_at: string;
-  picture: any;
+  price: number | string;
+  pictureUrl: string;
+}
+
+function stripProduct(product: any): Product {
+  return {
+    id: product.id,
+    title: product.title,
+    description: product.description,
+    price: '$' + product.price.toFixed(2),
+    pictureUrl: process.env.API_URL + product.picture.url,
+  };
 }
 
 export const getSingleProduct = async (id: string): Promise<Product> => {
@@ -18,6 +26,6 @@ export const getSingleProduct = async (id: string): Promise<Product> => {
 export const getProducts = async (): Promise<Product[]> => {
   console.log('getProducts');
   const products = await fetchJson(`${process.env.API_URL}/products`)
-  return products
+  return products.map((product) => stripProduct(product))
 
 }
