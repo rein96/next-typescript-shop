@@ -20,12 +20,11 @@ function stripProduct(product: any): Product {
 export const getSingleProduct = async (id: string): Promise<Product> => {
   console.log('getSingleProduct id', id)
   const product = await fetchJson(`${process.env.API_URL}/products/${id}`)
-  return product;
+  return stripProduct(product);
 }
 
 export const getProducts = async (): Promise<Product[]> => {
   console.log('getProducts');
   const products = await fetchJson(`${process.env.API_URL}/products`)
-  return products.map((product) => stripProduct(product))
-
+  return products.map((product: any) => stripProduct(product))
 }
