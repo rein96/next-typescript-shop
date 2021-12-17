@@ -3,15 +3,29 @@ import Page from 'components/Page';
 import Field from 'components/Field';
 import Input from 'components/Input';
 import Button from 'components/Button';
+import { fetchJson } from 'lib/api';
 
 const SignInPage: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [status, setStatus] = useState({ loading: false, error: false })
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = (event) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     console.log('should submit:', { email, password });
+    setStatus({ loading: true, error: false })
+    try {
+      const response = await fetchJson('http://localhost:1337/auth/local', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password: password })
+      })
+      setStatus({ loading: false, error: false })
+      console.log('response', response)
+    } catch (err) {
+      setStatus({ loading: false, error: true })
+    }
   };
 
   return (
@@ -32,9 +46,21 @@ const SignInPage: React.FC = () => {
             onChange={(event) => setPassword(event.target.value)}
           />
         </Field>
-        <Button type="submit">
-          Sign In
-        </Button>
+        {
+          status.error && <p className="text-red-700">
+            Invalid credentials
+          </p>
+        }
+        {
+          status.loading &&
+          <p>Loading...</p>
+        }
+        {
+          !status.loading &&
+          <Button type="submit">
+            Sign In
+          </Button>
+        }
       </form>
     </Page>
   );

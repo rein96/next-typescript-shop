@@ -12,8 +12,8 @@ export class ApiError extends Error {
   }
 }
 
-export const fetchJson = async (url: string): Promise<any> => {
-  const response = await fetch(url);
+export const fetchJson = async (url: string, options?: RequestInit): Promise<any> => {
+  const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error(`request failed: ${response.status}`)
   }
