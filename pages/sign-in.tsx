@@ -16,10 +16,10 @@ const SignInPage: React.FC = () => {
     console.log('should submit:', { email, password });
     setStatus({ loading: true, error: false })
     try {
-      const response = await fetchJson('http://localhost:1337/auth/local', {
+      const response = await fetchJson('api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email, password: password })
+        body: JSON.stringify({ email, password })
       })
       setStatus({ loading: false, error: false })
       console.log('response', response)
