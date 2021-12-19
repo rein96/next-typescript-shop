@@ -1,26 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { User } from 'lib/user';
 import { fetchJson } from 'lib/api';
-import { useQuery } from 'react-query';
+import { useUser } from 'hooks/useUser';
 
 const NavBar: React.FC = () => {
 
-  const { data: user } = useQuery('user', async () => {
-    try {
-      return await fetchJson('/api/user')
-    } catch (err) {
-      return undefined
-    }
-  }, {
-    staleTime: 30000, // 30 seconds
-    cacheTime: Infinity,
-  })
-  console.log('user', user)
+  const user = useUser()
 
   const handleSignOut = async () => {
     await fetchJson('/api/logout')
-    // setUser(undefined);
+    //TODO setUser(undefined);
   }
 
   return (
