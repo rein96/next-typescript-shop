@@ -2,27 +2,26 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { User } from 'lib/user';
 import { fetchJson } from 'lib/api';
+import { useQuery } from 'react-query';
 
 const NavBar: React.FC = () => {
-  const [user, setUser] = useState<User>();
 
-  const getUser = async () => {
+  const { data: user } = useQuery('user', async () => {
     try {
-      const user = await fetchJson('/api/user')
-      setUser(user)
+      return await fetchJson('/api/user')
     } catch (err) {
-      console.error(err)
+      return undefined
     }
-  }
+  }, {
+    staleTime: 30000, // 30 seconds
+    cacheTime: Infinity,
+  })
+  console.log('user', user)
 
   const handleSignOut = async () => {
     await fetchJson('/api/logout')
-    setUser(undefined);
+    // setUser(undefined);
   }
-
-  useEffect(() => {
-    getUser()
-  }, [])
 
   return (
     <nav className="px-2 py-1 text-sm">
