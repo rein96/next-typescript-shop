@@ -1,6 +1,7 @@
 import React from 'react'
 import Head from 'next/head'
 import Title from './Title'
+import NavBar from './NavBar';
 
 interface PageProps {
   title: string;
@@ -13,6 +14,9 @@ const Page: React.FC<PageProps> = ({ title, children }) => {
       <Head>
         <title>{title} - Plant Shop 🌴</title>
       </Head>
+      <header>
+        <NavBar />
+      </header>
       <main className='px-6 py-4'>
         <Title>{title}</Title>
         {children}
