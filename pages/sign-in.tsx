@@ -1,5 +1,5 @@
 import React, { useState, FormEventHandler } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useRouter } from 'next/router';
 import Page from 'components/Page';
 import Field from 'components/Field';
@@ -9,6 +9,7 @@ import { fetchJson } from 'lib/api';
 
 const SignInPage: React.FC = () => {
   const router = useRouter();
+  const queryClient = useQueryClient()
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,8 +24,15 @@ const SignInPage: React.FC = () => {
     event.preventDefault();
     console.log('should submit:', { email, password });
     try {
+      // Get user data from useMutation hook
       const user = await mutateAsync()
+
+      // Force update USER_QUERY to log in immediately 
+      queryClient.setQueryData('USER_QUERY', user)
+
+      // Redirect to home
       router.push('/')
+
       console.log('handleSubmit: user', user)
 
     } catch (err) {
