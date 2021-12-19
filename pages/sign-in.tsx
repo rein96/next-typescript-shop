@@ -1,4 +1,5 @@
 import React, { useState, FormEventHandler } from 'react';
+import { useRouter } from 'next/router';
 import Page from 'components/Page';
 import Field from 'components/Field';
 import Input from 'components/Input';
@@ -6,6 +7,7 @@ import Button from 'components/Button';
 import { fetchJson } from 'lib/api';
 
 const SignInPage: React.FC = () => {
+  const router = useRouter();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +24,7 @@ const SignInPage: React.FC = () => {
         body: JSON.stringify({ email, password })
       })
       setStatus({ loading: false, error: false })
+      router.push('/')
       console.log('response', response)
     } catch (err) {
       setStatus({ loading: false, error: true })
