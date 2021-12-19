@@ -2,6 +2,8 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 import { fetchJson } from "lib/api"
 import { User } from "lib/user"
 
+const USER_QUERY_KEY = 'USER_QUERY_KEY'
+
 interface SignInVariables {
   email: string;
   password: string;
@@ -14,7 +16,7 @@ interface UseSignInResult {
 }
 
 export function useUser(): User {
-  const { data } = useQuery('USER_QUERY', async () => {
+  const { data } = useQuery(USER_QUERY_KEY, async () => {
     try {
       return await fetchJson('/api/user')
     } catch (err) {
@@ -31,7 +33,6 @@ export function useUser(): User {
 export function useSignIn(): UseSignInResult {
   const queryClient = useQueryClient()
 
-  // Will be run from mutateAsync()
   const { isError, isLoading, mutateAsync } =
     useMutation<User, Error, SignInVariables>(({ email, password }) =>
       fetchJson('api/login', {
@@ -48,8 +49,8 @@ export function useSignIn(): UseSignInResult {
         // Get user data from useMutation hook
         const user = await mutateAsync({ email, password })
 
-        // Force update USER_QUERY to log in immediately 
-        queryClient.setQueryData('USER_QUERY', user)
+        // Force update USER_QUERY_KEY to log in immediately 
+        queryClient.setQueryData(USER_QUERY_KEY, user)
 
         // Success log in
         return true
@@ -59,5 +60,19 @@ export function useSignIn(): UseSignInResult {
         return false
       }
     }
+  }
+}
+
+export function useSignOut() {
+  const queryClient = useQueryClient()
+
+  const { mutateAsync } = useMutation(() => fetchJson('api/logout'))
+
+  return async () => {
+    await mutateAsync()
+
+    // Force update USER_QUERY_KEY 
+    // to log out immediately (undefined value)
+    queryClient.setQueryData(USER_QUERY_KEY, undefined)
   }
 }

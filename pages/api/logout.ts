@@ -1,6 +1,7 @@
 import cookie from 'cookie'
 
 function handleLogout(req, res) {
+  console.log('handleLogout')
   // Set jwt empty string value
   res.status(200)
     .setHeader('Set-Cookie', cookie.serialize('jwt', '', {
