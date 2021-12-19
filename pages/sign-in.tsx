@@ -1,4 +1,5 @@
 import React, { useState, FormEventHandler } from 'react';
+import { useMutation } from 'react-query';
 import { useRouter } from 'next/router';
 import Page from 'components/Page';
 import Field from 'components/Field';
@@ -11,23 +12,23 @@ const SignInPage: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [status, setStatus] = useState({ loading: false, error: false })
+
+  const { isError, isLoading, mutateAsync } = useMutation(() => fetchJson('api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  }))
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     console.log('should submit:', { email, password });
-    setStatus({ loading: true, error: false })
     try {
-      const response = await fetchJson('api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-      setStatus({ loading: false, error: false })
+      const user = await mutateAsync()
       router.push('/')
-      console.log('response', response)
+      console.log('handleSubmit: user', user)
+
     } catch (err) {
-      setStatus({ loading: false, error: true })
+      // mutation.isError will be true
     }
   };
 
@@ -50,16 +51,16 @@ const SignInPage: React.FC = () => {
           />
         </Field>
         {
-          status.error && <p className="text-red-700">
+          isError && <p className="text-red-700">
             Invalid credentials
           </p>
         }
         {
-          status.loading &&
+          isLoading &&
           <p>Loading...</p>
         }
         {
-          !status.loading &&
+          !isLoading &&
           <Button type="submit">
             Sign In
           </Button>
