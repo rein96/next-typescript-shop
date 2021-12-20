@@ -1,12 +1,12 @@
 import React from 'react'
-import Head from 'next/head'
 import Image from 'next/image'
 import { getProducts, getSingleProduct, Product } from 'lib/products'
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { ParsedUrlQuery } from 'querystring';
-import Title from 'components/Title';
 import { ApiError } from 'lib/api';
 import Page from 'components/Page';
+import { useUser } from 'hooks/useUser';
+import AddToCartWidget from 'components/AddToCartWidget';
 
 interface ProductPageParams extends ParsedUrlQuery {
   id: string;
@@ -22,13 +22,12 @@ interface ProductPageProps {
  * */
 export const getStaticPaths: GetStaticPaths<ProductPageParams> = async () => {
   const products = await getProducts();
-  console.log('products', products)
+  console.log('getStaticPaths products', products)
   const paths = products.map(product => ({
     params: {
       id: product.id.toString()
     }
   }))
-  console.log('paths', paths)
 
   return {
     paths,
@@ -62,7 +61,10 @@ export const getStaticProps: GetStaticProps<ProductPageProps, ProductPageParams>
 }
 
 const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
-  console.log('[ProductPage] help', product)
+  console.log('[ProductPage]', product)
+
+  const user = useUser()
+
   return (
     <Page title={`${product.title}`}>
       <div className="flex flex-col lg:flex-row">
@@ -81,6 +83,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
           <p className="text-lg font-bold mt-2">
             {product.price}
           </p>
+          {user && <AddToCartWidget productId={product.id} />}
         </div>
       </div>
     </Page>
