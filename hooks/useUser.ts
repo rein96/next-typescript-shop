@@ -35,7 +35,7 @@ export function useSignIn(): UseSignInResult {
 
   const { isError, isLoading, mutateAsync } =
     useMutation<User, Error, SignInVariables>(({ email, password }) =>
-      fetchJson('api/login', {
+      fetchJson('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -66,7 +66,7 @@ export function useSignIn(): UseSignInResult {
 export function useSignOut() {
   const queryClient = useQueryClient()
 
-  const { mutateAsync } = useMutation(() => fetchJson('api/logout'))
+  const { mutateAsync } = useMutation(() => fetchJson('/api/logout'))
 
   return async () => {
     await mutateAsync()
