@@ -17,8 +17,7 @@ const stripCartItem = (cardItem: any): CardItem => {
 }
 
 
-const handleCart: NextApiHandler<CardItem> = async (req, res) => {
-
+const handleGetCart: NextApiHandler<CardItem> = async (req, res) => {
   const { jwt } = req.cookies
   if (!jwt) {
     return res.status(401).end()
@@ -34,5 +33,52 @@ const handleCart: NextApiHandler<CardItem> = async (req, res) => {
     res.status(401).end()
   }
 }
+
+const handlePostCart = async (req, res) => {
+  const { jwt } = req.cookies
+  if (!jwt) {
+    return res.status(401).end()
+  }
+
+  const { productId, quantity } = req.body
+
+  try {
+    const product = await fetchJson(`${API_URL}/cart-items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${jwt}`
+      },
+      body: JSON.stringify({
+        product: productId,
+        quantity: quantity
+      })
+    })
+
+    if (product.id) {
+      res.status(200).json({
+        message: 'Add to cart successfully',
+        productId,
+        quantity,
+      })
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(401).end()
+  }
+}
+
+const handleCart = (req, res) => {
+  switch (req.method) {
+    case 'GET':
+      return handleGetCart(req, res)
+    case 'POST':
+      return handlePostCart(req, res)
+    default:
+      // 405 = method not allowed
+      res.status(405).end()
+  }
+}
+
 
 export default handleCart;
